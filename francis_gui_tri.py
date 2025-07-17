@@ -3,10 +3,15 @@ from tkinter import Menu as m
 
 root = t.Tk()
 root.title("Franics_turbine_optimization")
+root.iconbitmap("francis.ico")
+
 
 #creating the menu barm
 
 menubar = m(root)
+#geometry
+root.geometry("600x400")
+
 
 #all the decleration related with the file menu
 
@@ -81,7 +86,7 @@ help_menu.add_command(label="Releas Note",command=release_file)
 help_menu.add_command(label="About",command=about_file)
 menubar.add_cascade(label="?",menu=help_menu)
 
-root.config(menu=menubar)
+root.config(menu=menubar,bg="black")
 root.mainloop()
 
 
