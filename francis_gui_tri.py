@@ -1,5 +1,10 @@
 import tkinter as t
 from tkinter import Menu as m
+from tkinter import Toplevel, Label, Entry, Button
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
+
 
 root = t.Tk()
 root.title("Franics_turbine_optimization")
@@ -40,7 +45,8 @@ menubar.add_cascade(label="File",menu=file_menu)
 def close_all():
     print("close all_file and go to inital page")
 def blade_desgin():
-    print("blade desgin started")
+    print("................")
+
 
 #module
 module_menu = m(menubar, tearoff=0)

@@ -1,0 +1,105 @@
+import sys
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem,
+    QFormLayout, QGroupBox
+)
+from PyQt5.QtGui import QIcon
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+
+class VelocityTriangleCanvas(FigureCanvas):
+    def __init__(self):
+        self.fig = Figure()
+        self.ax = self.fig.add_subplot(111)
+        super().__init__(self.fig)
+        self.draw_example()
+
+    def draw_example(self):
+        self.ax.clear()
+        self.ax.set_title("Velocity Triangles")
+        self.ax.set_xlim(0, 1)
+        self.ax.set_ylim(0, 1)
+
+        # Dummy triangle
+        self.ax.plot([0, 0.4], [0, 0.2], label="C1")
+        self.ax.plot([0.4, 0.7], [0.2, 0.2], label="U1")
+        self.ax.plot([0.7, 0], [0.2, 0], label="W1")
+
+        self.ax.legend()
+        self.draw()
+
+
+class TurbineApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Francis Turbine Optimization")
+        self.setGeometry(100, 100, 1000, 600)
+        self.setWindowIcon(QIcon("francis.ico"))  # Optional icon
+
+        self.init_ui()
+
+    def init_ui(self):
+        main_widget = QWidget()
+        main_layout = QHBoxLayout()
+
+        # Left: Matplotlib canvas
+        self.canvas = VelocityTriangleCanvas()
+        main_layout.addWidget(self.canvas, 3)
+
+        # Right: Controls
+        controls_layout = QVBoxLayout()
+
+        # Input fields
+        input_group = QGroupBox("Input Parameters")
+        form_layout = QFormLayout()
+        self.u1_input = QLineEdit("0.74115")
+        self.zp_input = QLineEdit("3")
+        self.d2_input = QLineEdit("0.54")
+        self.acc_input = QLineEdit("35.3")
+
+        form_layout.addRow("U_1:", self.u1_input)
+        form_layout.addRow("Z_p:", self.zp_input)
+        form_layout.addRow("D_2 [m]:", self.d2_input)
+        form_layout.addRow("Acceleration [%]:", self.acc_input)
+        input_group.setLayout(form_layout)
+
+        controls_layout.addWidget(input_group)
+
+        # Buttons
+        self.check_button = QPushButton("Check Values")
+        self.update_button = QPushButton("Update Design")
+
+        controls_layout.addWidget(self.check_button)
+        controls_layout.addWidget(self.update_button)
+
+        # Info label
+        self.info_label = QLabel(
+            "Submit the head and flow rate of the design case in question.\n"
+            "Fill in U_1, Z_p, D_2, and acceleration %, then press Check."
+        )
+        self.info_label.setWordWrap(True)
+        controls_layout.addWidget(self.info_label)
+
+        main_layout.addLayout(controls_layout, 2)
+
+        # Bottom: Table
+        self.table = QTableWidget(1, 12)
+        self.table.setHorizontalHeaderLabels([
+            "U1 reduced", "Zp", "n", "D2", "Cm2", "beta2", "D1", "W1", "W2",
+            "beta1", "H", "Reaction ratio"
+        ])
+        main_v_layout = QVBoxLayout()
+        main_v_layout.addLayout(main_layout)
+        main_v_layout.addWidget(self.table)
+
+        main_widget.setLayout(main_v_layout)
+        self.setCentralWidget(main_widget)
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = TurbineApp()
+    window.show()
+    sys.exit(app.exec_())

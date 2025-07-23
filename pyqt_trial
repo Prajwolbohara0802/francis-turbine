@@ -1,0 +1,123 @@
+import sys
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QAction, QMenu, QLabel, QVBoxLayout, 
+    QWidget, QMessageBox
+)
+from PyQt5.QtGui import QIcon
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
+from axial1 import MainApp
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Francis_turbine_optimization")
+        self.setGeometry(100, 100, 600, 400)
+        self.setWindowIcon(QIcon("francis.ico"))
+        
+        # Store reference to blade window
+        self.blade_window = None
+        
+        self.init_ui()
+
+    def init_ui(self):
+        # Menubar
+        menubar = self.menuBar()
+
+        # File Menu
+        file_menu = menubar.addMenu("File")
+        new_action = QAction("New Project", self)
+        new_action.triggered.connect(self.new_file)
+        file_menu.addAction(new_action)
+
+        file_menu.addAction("Open")
+        file_menu.addAction("Load Last Project")
+        file_menu.addAction("Insert Project")
+        file_menu.addAction("Close Project")
+        file_menu.addSeparator()
+        file_menu.addAction("Save")
+        file_menu.addAction("Save As")
+        file_menu.addSeparator()
+
+        exit_action = QAction("Exit", self)
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
+
+        # Module Menu
+        module_menu = menubar.addMenu("Module")
+        close_all_action = QAction("Close all", self)
+        close_all_action.triggered.connect(self.close_all)
+        module_menu.addAction(close_all_action)
+        module_menu.addSeparator()
+
+        blade_action = QAction("Blade Design Module", self)
+        blade_action.triggered.connect(self.blade_design)
+        module_menu.addAction(blade_action)
+
+        module_menu.addSeparator()
+        module_menu.addAction("Summary")
+
+        # Option Menu
+        option_menu = menubar.addMenu("Option")
+        pref_action = QAction("Preference", self)
+        pref_action.triggered.connect(self.pref_file)
+        option_menu.addAction(pref_action)
+
+        option_menu.addSeparator()
+        option_menu.addAction("Restore toolbar", self.restore_file)
+        option_menu.addSeparator()
+        option_menu.addAction("Reset Default Setting", self.reset_file)
+
+        # Help Menu
+        help_menu = menubar.addMenu("?")
+        release_action = QAction("Release Note", self)
+        release_action.triggered.connect(self.release_file)
+        help_menu.addAction(release_action)
+
+        about_action = QAction("About", self)
+        about_action.triggered.connect(self.about_file)
+        help_menu.addAction(about_action)
+
+    # Action Methods
+    def new_file(self):
+        print("New file has been created")
+
+    def close_all(self):
+        print("Close all files and go to initial page")
+
+    def blade_design(self):
+        print("Blade design function...")
+        print("Launching Blade Design GUI...")
+        
+        # Create the window if it doesn't exist or is closed
+        if self.blade_window is None or not self.blade_window.isVisible():
+            self.blade_window = MainApp()
+            self.blade_window.show()
+        else:
+            # Bring to front if already exists
+            self.blade_window.raise_()
+            self.blade_window.activateWindow()
+
+    def pref_file(self):
+        print("Preference...")
+
+    def restore_file(self):
+        print("Restore toolbar")
+
+    def reset_file(self):
+        print("Reset default settings")
+
+    def release_file(self):
+        QMessageBox.information(self, "Release Note", "Version 1.0.0")
+
+    def about_file(self):
+        QMessageBox.information(self, "About", 
+            "Francis_turbine optimization software in IOE Thapathali Campus")
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
